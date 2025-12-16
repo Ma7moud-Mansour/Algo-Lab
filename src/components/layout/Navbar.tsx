@@ -1,13 +1,15 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, Github, BookOpen, Sparkles } from 'lucide-react';
+import { Menu, Github, BookOpen, Sparkles, PanelLeftClose, PanelLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 interface NavbarProps {
   onMenuToggle: () => void;
+  showMenuButton?: boolean;
+  sidebarOpen?: boolean;
 }
 
-export function Navbar({ onMenuToggle }: NavbarProps) {
+export function Navbar({ onMenuToggle, showMenuButton = false, sidebarOpen = false }: NavbarProps) {
   const location = useLocation();
 
   const navLinks = [
@@ -21,6 +23,7 @@ export function Navbar({ onMenuToggle }: NavbarProps) {
       <div className="flex h-full items-center justify-between px-4 lg:px-6">
         {/* Left section */}
         <div className="flex items-center gap-4">
+          {/* Mobile hamburger - always shown on mobile */}
           <Button
             variant="ghost"
             size="icon"
@@ -29,6 +32,23 @@ export function Navbar({ onMenuToggle }: NavbarProps) {
           >
             <Menu className="h-5 w-5" />
           </Button>
+
+          {/* Desktop sidebar toggle - shown only on algorithm pages */}
+          {showMenuButton && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onMenuToggle}
+              className="hidden lg:flex text-muted-foreground hover:text-foreground transition-colors"
+              title={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+            >
+              {sidebarOpen ? (
+                <PanelLeftClose className="h-5 w-5" />
+              ) : (
+                <PanelLeft className="h-5 w-5" />
+              )}
+            </Button>
+          )}
 
           <Link to="/" className="flex items-center gap-2 group">
             <div className="relative">

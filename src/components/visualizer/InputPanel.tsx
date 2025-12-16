@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 
 interface InputPanelProps {
-  type: 'sorting' | 'searching' | 'graph' | 'nqueens' | 'fibonacci' | 'hanoi' | 'closestpair';
+  type: 'sorting' | 'searching' | 'graph' | 'nqueens' | 'fibonacci' | 'hanoi' | 'closestpair' | 'knapsack' | 'mergepattern';
   onInputChange: (input: Record<string, unknown>) => void;
   className?: string;
 }
@@ -16,6 +16,9 @@ export function InputPanel({ type, onInputChange, className }: InputPanelProps) 
   const [targetInput, setTargetInput] = useState('23');
   const [numDisks, setNumDisks] = useState('4');
   const [numPoints, setNumPoints] = useState('8');
+  const [knapsackCapacity, setKnapsackCapacity] = useState('50');
+  const [knapsackItems, setKnapsackItems] = useState('10:60, 20:100, 30:120');
+  const [fileSizes, setFileSizes] = useState('2, 3, 4, 5, 6');
   const [error, setError] = useState('');
 
   const parseArray = (input: string): number[] | null => {
@@ -60,6 +63,36 @@ export function InputPanel({ type, onInputChange, className }: InputPanelProps) 
       return;
     }
 
+    if (type === 'knapsack') {
+      const capacity = parseInt(knapsackCapacity, 10);
+      if (isNaN(capacity) || capacity <= 0) {
+        setError('Capacity must be a positive number');
+        return;
+      }
+      try {
+        const items = knapsackItems.split(',').map(item => {
+          const [weight, value] = item.trim().split(':').map(s => parseInt(s.trim(), 10));
+          if (isNaN(weight) || isNaN(value)) throw new Error('Invalid format');
+          return { weight, value };
+        });
+        if (items.length === 0) throw new Error('No items');
+        onInputChange({ items, capacity });
+      } catch {
+        setError('Format: weight:value, weight:value (e.g., 10:60, 20:100)');
+      }
+      return;
+    }
+
+    if (type === 'mergepattern') {
+      const sizes = parseArray(fileSizes);
+      if (!sizes || sizes.length < 2) {
+        setError('Enter at least 2 comma-separated file sizes');
+        return;
+      }
+      onInputChange({ fileSizes: sizes });
+      return;
+    }
+
     const array = parseArray(arrayInput);
     if (!array) {
       setError('Please enter valid comma-separated numbers');
@@ -98,6 +131,27 @@ export function InputPanel({ type, onInputChange, className }: InputPanelProps) 
         id: i,
       }));
       onInputChange({ points });
+      return;
+    }
+
+    if (type === 'knapsack') {
+      const capacity = Math.floor(Math.random() * 50) + 30;
+      setKnapsackCapacity(capacity.toString());
+      const numItems = Math.floor(Math.random() * 4) + 3;
+      const items = Array.from({ length: numItems }, () => ({
+        weight: Math.floor(Math.random() * 20) + 5,
+        value: Math.floor(Math.random() * 80) + 20,
+      }));
+      setKnapsackItems(items.map(i => `${i.weight}:${i.value}`).join(', '));
+      onInputChange({ items, capacity });
+      return;
+    }
+
+    if (type === 'mergepattern') {
+      const numFiles = Math.floor(Math.random() * 4) + 4;
+      const sizes = Array.from({ length: numFiles }, () => Math.floor(Math.random() * 20) + 2);
+      setFileSizes(sizes.join(', '));
+      onInputChange({ fileSizes: sizes });
       return;
     }
 
@@ -145,6 +199,54 @@ export function InputPanel({ type, onInputChange, className }: InputPanelProps) 
             onChange={(e) => setNumPoints(e.target.value)}
             placeholder="e.g., 8"
             className="font-mono text-sm bg-muted/50 border-panel-border w-32"
+          />
+        </div>
+      );
+    }
+
+    if (type === 'knapsack') {
+      return (
+        <div className="space-y-3">
+          <div className="space-y-1.5">
+            <Label htmlFor="capacity-input" className="text-xs text-muted-foreground">
+              Knapsack Capacity
+            </Label>
+            <Input
+              id="capacity-input"
+              value={knapsackCapacity}
+              onChange={(e) => setKnapsackCapacity(e.target.value)}
+              placeholder="e.g., 50"
+              className="font-mono text-sm bg-muted/50 border-panel-border w-32"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="items-input" className="text-xs text-muted-foreground">
+              Items (weight:value, ...)
+            </Label>
+            <Input
+              id="items-input"
+              value={knapsackItems}
+              onChange={(e) => setKnapsackItems(e.target.value)}
+              placeholder="e.g., 10:60, 20:100"
+              className="font-mono text-sm bg-muted/50 border-panel-border"
+            />
+          </div>
+        </div>
+      );
+    }
+
+    if (type === 'mergepattern') {
+      return (
+        <div className="space-y-1.5">
+          <Label htmlFor="files-input" className="text-xs text-muted-foreground">
+            File Sizes (comma-separated)
+          </Label>
+          <Input
+            id="files-input"
+            value={fileSizes}
+            onChange={(e) => setFileSizes(e.target.value)}
+            placeholder="e.g., 2, 3, 4, 5, 6"
+            className="font-mono text-sm bg-muted/50 border-panel-border"
           />
         </div>
       );

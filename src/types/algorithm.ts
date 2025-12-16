@@ -5,6 +5,7 @@ export type AlgorithmCategory =
   | 'data-structures'
   | 'backtracking' 
   | 'dynamic-programming' 
+  | 'greedy'
   | 'other';
 
 export interface AlgorithmComplexity {
