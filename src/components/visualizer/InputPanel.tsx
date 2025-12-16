@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 
 interface InputPanelProps {
-  type: 'sorting' | 'searching';
+  type: 'sorting' | 'searching' | 'graph' | 'nqueens' | 'fibonacci' | 'hanoi' | 'closestpair';
   onInputChange: (input: Record<string, unknown>) => void;
   className?: string;
 }
@@ -14,6 +14,8 @@ interface InputPanelProps {
 export function InputPanel({ type, onInputChange, className }: InputPanelProps) {
   const [arrayInput, setArrayInput] = useState('64, 34, 25, 12, 22, 11, 90');
   const [targetInput, setTargetInput] = useState('23');
+  const [numDisks, setNumDisks] = useState('4');
+  const [numPoints, setNumPoints] = useState('8');
   const [error, setError] = useState('');
 
   const parseArray = (input: string): number[] | null => {
@@ -31,21 +33,45 @@ export function InputPanel({ type, onInputChange, className }: InputPanelProps) 
   };
 
   const handleApply = () => {
+    setError('');
+
+    if (type === 'hanoi') {
+      const disks = parseInt(numDisks, 10);
+      if (isNaN(disks) || disks < 1 || disks > 8) {
+        setError('Number of disks must be between 1 and 8');
+        return;
+      }
+      onInputChange({ numDisks: disks });
+      return;
+    }
+
+    if (type === 'closestpair') {
+      const count = parseInt(numPoints, 10);
+      if (isNaN(count) || count < 2 || count > 20) {
+        setError('Number of points must be between 2 and 20');
+        return;
+      }
+      const points = Array.from({ length: count }, (_, i) => ({
+        x: Math.floor(Math.random() * 300) + 30,
+        y: Math.floor(Math.random() * 250) + 30,
+        id: i,
+      }));
+      onInputChange({ points });
+      return;
+    }
+
     const array = parseArray(arrayInput);
     if (!array) {
       setError('Please enter valid comma-separated numbers');
       return;
     }
 
-    setError('');
-    
     if (type === 'searching') {
       const target = parseInt(targetInput.trim(), 10);
       if (isNaN(target)) {
         setError('Please enter a valid target number');
         return;
       }
-      // Sort array for binary search
       const sortedArray = [...array].sort((a, b) => a - b);
       onInputChange({ array: sortedArray, target });
     } else {
@@ -54,10 +80,30 @@ export function InputPanel({ type, onInputChange, className }: InputPanelProps) 
   };
 
   const handleRandomize = () => {
-    const length = Math.floor(Math.random() * 6) + 5; // 5-10 elements
+    setError('');
+
+    if (type === 'hanoi') {
+      const disks = Math.floor(Math.random() * 5) + 2;
+      setNumDisks(disks.toString());
+      onInputChange({ numDisks: disks });
+      return;
+    }
+
+    if (type === 'closestpair') {
+      const count = Math.floor(Math.random() * 10) + 5;
+      setNumPoints(count.toString());
+      const points = Array.from({ length: count }, (_, i) => ({
+        x: Math.floor(Math.random() * 300) + 30,
+        y: Math.floor(Math.random() * 250) + 30,
+        id: i,
+      }));
+      onInputChange({ points });
+      return;
+    }
+
+    const length = Math.floor(Math.random() * 6) + 5;
     const arr = Array.from({ length }, () => Math.floor(Math.random() * 100) + 1);
     setArrayInput(arr.join(', '));
-    setError('');
 
     if (type === 'searching') {
       const sortedArr = [...arr].sort((a, b) => a - b);
@@ -67,6 +113,73 @@ export function InputPanel({ type, onInputChange, className }: InputPanelProps) 
     } else {
       onInputChange({ array: arr });
     }
+  };
+
+  const renderInputFields = () => {
+    if (type === 'hanoi') {
+      return (
+        <div className="space-y-1.5">
+          <Label htmlFor="disks-input" className="text-xs text-muted-foreground">
+            Number of Disks (1-8)
+          </Label>
+          <Input
+            id="disks-input"
+            value={numDisks}
+            onChange={(e) => setNumDisks(e.target.value)}
+            placeholder="e.g., 4"
+            className="font-mono text-sm bg-muted/50 border-panel-border w-32"
+          />
+        </div>
+      );
+    }
+
+    if (type === 'closestpair') {
+      return (
+        <div className="space-y-1.5">
+          <Label htmlFor="points-input" className="text-xs text-muted-foreground">
+            Number of Points (2-20)
+          </Label>
+          <Input
+            id="points-input"
+            value={numPoints}
+            onChange={(e) => setNumPoints(e.target.value)}
+            placeholder="e.g., 8"
+            className="font-mono text-sm bg-muted/50 border-panel-border w-32"
+          />
+        </div>
+      );
+    }
+
+    return (
+      <>
+        <div className="space-y-1.5">
+          <Label htmlFor="array-input" className="text-xs text-muted-foreground">
+            Array (comma-separated)
+          </Label>
+          <Input
+            id="array-input"
+            value={arrayInput}
+            onChange={(e) => setArrayInput(e.target.value)}
+            placeholder="e.g., 64, 34, 25, 12, 22"
+            className="font-mono text-sm bg-muted/50 border-panel-border"
+          />
+        </div>
+        {type === 'searching' && (
+          <div className="space-y-1.5">
+            <Label htmlFor="target-input" className="text-xs text-muted-foreground">
+              Target Value
+            </Label>
+            <Input
+              id="target-input"
+              value={targetInput}
+              onChange={(e) => setTargetInput(e.target.value)}
+              placeholder="e.g., 23"
+              className="font-mono text-sm bg-muted/50 border-panel-border w-32"
+            />
+          </div>
+        )}
+      </>
+    );
   };
 
   return (
@@ -85,42 +198,9 @@ export function InputPanel({ type, onInputChange, className }: InputPanelProps) 
       </div>
 
       <div className="space-y-3">
-        <div className="space-y-1.5">
-          <Label htmlFor="array-input" className="text-xs text-muted-foreground">
-            Array (comma-separated)
-          </Label>
-          <Input
-            id="array-input"
-            value={arrayInput}
-            onChange={(e) => setArrayInput(e.target.value)}
-            placeholder="e.g., 64, 34, 25, 12, 22"
-            className="font-mono text-sm bg-muted/50 border-panel-border"
-          />
-        </div>
-
-        {type === 'searching' && (
-          <div className="space-y-1.5">
-            <Label htmlFor="target-input" className="text-xs text-muted-foreground">
-              Target Value
-            </Label>
-            <Input
-              id="target-input"
-              value={targetInput}
-              onChange={(e) => setTargetInput(e.target.value)}
-              placeholder="e.g., 23"
-              className="font-mono text-sm bg-muted/50 border-panel-border w-32"
-            />
-          </div>
-        )}
-
-        {error && (
-          <p className="text-xs text-destructive">{error}</p>
-        )}
-
-        <Button
-          onClick={handleApply}
-          className="w-full h-9 gap-2 bg-primary/80 hover:bg-primary"
-        >
+        {renderInputFields()}
+        {error && <p className="text-xs text-destructive">{error}</p>}
+        <Button onClick={handleApply} className="w-full h-9 gap-2 bg-primary/80 hover:bg-primary">
           Apply
           <ArrowRight className="h-4 w-4" />
         </Button>
