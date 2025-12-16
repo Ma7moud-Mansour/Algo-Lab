@@ -7,6 +7,8 @@ import { ArrayVisualizer } from '@/components/visualizer/ArrayVisualizer';
 import { GraphVisualizer } from '@/components/visualizer/GraphVisualizer';
 import { GridVisualizer } from '@/components/visualizer/GridVisualizer';
 import { DPVisualizer } from '@/components/visualizer/DPVisualizer';
+import { HanoiVisualizer } from '@/components/visualizer/HanoiVisualizer';
+import { ClosestPairVisualizer } from '@/components/visualizer/ClosestPairVisualizer';
 import { ControlPanel } from '@/components/visualizer/ControlPanel';
 import { LogPanel } from '@/components/visualizer/LogPanel';
 import { AlgorithmInfo } from '@/components/visualizer/AlgorithmInfo';
@@ -19,15 +21,19 @@ import { linearSearchCode, binarySearchCode } from '@/algorithms/code/searching'
 import { bfsCode, dfsCode } from '@/algorithms/code/graph';
 import { nQueensCode } from '@/algorithms/code/backtracking';
 import { fibonacciCode } from '@/algorithms/code/dynamic';
+import { hanoiCode } from '@/algorithms/code/hanoi';
+import { closestPairCode } from '@/algorithms/code/closestpair';
 import { bubbleSortRunner, selectionSortRunner, quickSortRunner, insertionSortRunner, mergeSortRunner, SortingInput } from '@/algorithms/runners/sorting';
 import { linearSearchRunner, binarySearchRunner, SearchingInput } from '@/algorithms/runners/searching';
 import { bfsRunner, dfsRunner, GraphInput } from '@/algorithms/runners/graph';
 import { nQueensRunner, NQueensInput } from '@/algorithms/runners/backtracking';
 import { fibonacciRunner, FibonacciInput } from '@/algorithms/runners/dynamic';
+import { hanoiRunner, HanoiInput } from '@/algorithms/runners/hanoi';
+import { closestPairRunner, ClosestPairInput } from '@/algorithms/runners/closestpair';
 import { VisualizationStep, AlgorithmCode, AlgorithmRunner } from '@/types/algorithm';
 import { cn } from '@/lib/utils';
 
-type AnyInput = SortingInput | SearchingInput | GraphInput | NQueensInput | FibonacciInput;
+type AnyInput = SortingInput | SearchingInput | GraphInput | NQueensInput | FibonacciInput | HanoiInput | ClosestPairInput;
 
 const algorithmCodeMap: Record<string, Record<string, AlgorithmCode>> = {
   'bubble-sort': bubbleSortCode,
@@ -41,6 +47,8 @@ const algorithmCodeMap: Record<string, Record<string, AlgorithmCode>> = {
   'dfs': dfsCode,
   'n-queens': nQueensCode,
   'fibonacci': fibonacciCode,
+  'tower-of-hanoi': hanoiCode,
+  'closest-pair': closestPairCode,
 };
 
 const algorithmRunnerMap: Record<string, AlgorithmRunner<AnyInput>> = {
@@ -55,9 +63,13 @@ const algorithmRunnerMap: Record<string, AlgorithmRunner<AnyInput>> = {
   'dfs': dfsRunner as AlgorithmRunner<AnyInput>,
   'n-queens': nQueensRunner as AlgorithmRunner<AnyInput>,
   'fibonacci': fibonacciRunner as AlgorithmRunner<AnyInput>,
+  'tower-of-hanoi': hanoiRunner as AlgorithmRunner<AnyInput>,
+  'closest-pair': closestPairRunner as AlgorithmRunner<AnyInput>,
 };
 
-const getVisualizerType = (category: string, id: string): 'array' | 'graph' | 'grid' | 'dp' => {
+const getVisualizerType = (category: string, id: string): 'array' | 'graph' | 'grid' | 'dp' | 'hanoi' | 'closestpair' => {
+  if (id === 'tower-of-hanoi') return 'hanoi';
+  if (id === 'closest-pair') return 'closestpair';
   if (category === 'graph') return 'graph';
   if (category === 'backtracking') return 'grid';
   if (category === 'dynamic-programming') return 'dp';
@@ -88,7 +100,7 @@ export default function AlgorithmVisualizer() {
   const handleInputChange = useCallback((input: Record<string, unknown>) => {
     if (runner) {
       setCurrentInput(input);
-      const generatedSteps = runner.generateSteps(input as AnyInput);
+      const generatedSteps = runner.generateSteps(input as unknown as AnyInput);
       setSteps(generatedSteps);
     }
   }, [runner]);
@@ -124,7 +136,7 @@ export default function AlgorithmVisualizer() {
     );
   }
 
-  const inputType = category === 'searching' ? 'searching' : category === 'graph' ? 'graph' : category === 'backtracking' ? 'nqueens' : category === 'dynamic-programming' ? 'fibonacci' : 'sorting';
+  const inputType = id === 'tower-of-hanoi' ? 'hanoi' : id === 'closest-pair' ? 'closestpair' : category === 'searching' ? 'searching' : category === 'graph' ? 'graph' : category === 'backtracking' ? 'nqueens' : category === 'dynamic-programming' ? 'fibonacci' : 'sorting';
 
   return (
     <div className="min-h-screen p-4 lg:p-6">
@@ -166,6 +178,8 @@ export default function AlgorithmVisualizer() {
           {visualizerType === 'graph' && <GraphVisualizer currentStep={currentStep} className="h-[300px]" />}
           {visualizerType === 'grid' && <GridVisualizer currentStep={currentStep} className="h-[300px]" />}
           {visualizerType === 'dp' && <DPVisualizer currentStep={currentStep} className="h-[300px]" />}
+          {visualizerType === 'hanoi' && <HanoiVisualizer currentStep={currentStep} className="h-[300px]" />}
+          {visualizerType === 'closestpair' && <ClosestPairVisualizer currentStep={currentStep} className="h-[300px]" />}
           <ControlPanel executionState={executionState} speed={speed} progress={progress} onRun={run} onPause={pause} onStep={step} onReset={reset} onSpeedChange={setSpeed} />
         </div>
       </div>

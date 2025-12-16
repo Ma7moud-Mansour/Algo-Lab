@@ -43,6 +43,13 @@ export const categories: CategoryInfo[] = [
     icon: 'Layers',
     color: 'primary',
   },
+  {
+    id: 'other',
+    name: 'Other',
+    description: 'Miscellaneous algorithms and techniques',
+    icon: 'Sparkles',
+    color: 'secondary',
+  },
 ];
 
 export const algorithms: AlgorithmDefinition[] = [
@@ -201,6 +208,36 @@ export const algorithms: AlgorithmDefinition[] = [
       space: 'O(n)',
     },
     supportedLanguages: ['javascript', 'python', 'pseudocode'],
+  },
+  {
+    id: 'tower-of-hanoi',
+    name: 'Tower of Hanoi',
+    category: 'backtracking',
+    route: '/algorithms/backtracking/tower-of-hanoi',
+    description: 'Classic recursive puzzle moving disks between three rods.',
+    longDescription: 'The Tower of Hanoi is a mathematical puzzle where you have three rods and N disks of different sizes. The objective is to move all disks from the first rod to the third, following rules: only one disk can be moved at a time, and a larger disk cannot be placed on top of a smaller disk.',
+    tags: ['recursion', 'puzzle', 'divide-and-conquer'],
+    complexity: {
+      time: { average: 'O(2^n)', worst: 'O(2^n)' },
+      space: 'O(n)',
+    },
+    supportedLanguages: ['javascript', 'python', 'pseudocode'],
+    useCases: ['Teaching recursion', 'Understanding call stack', 'Algorithm visualization'],
+  },
+  {
+    id: 'closest-pair',
+    name: 'Closest Pair of Points',
+    category: 'other',
+    route: '/algorithms/other/closest-pair',
+    description: 'Find the two closest points in a set using brute force.',
+    longDescription: 'The Closest Pair of Points problem finds the pair of points with the smallest Euclidean distance. This brute force approach compares all pairs with O(n²) complexity.',
+    tags: ['geometry', 'brute-force', 'computational-geometry'],
+    complexity: {
+      time: { average: 'O(n²)', worst: 'O(n²)' },
+      space: 'O(1)',
+    },
+    supportedLanguages: ['javascript', 'python', 'pseudocode'],
+    useCases: ['Computational geometry', 'Collision detection', 'Nearest neighbor problems'],
   },
 ];
 
