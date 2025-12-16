@@ -44,6 +44,13 @@ export const categories: CategoryInfo[] = [
     color: 'primary',
   },
   {
+    id: 'greedy',
+    name: 'Greedy',
+    description: 'Algorithms that make locally optimal choices',
+    icon: 'TrendingUp',
+    color: 'success',
+  },
+  {
     id: 'other',
     name: 'Other',
     description: 'Miscellaneous algorithms and techniques',
@@ -238,6 +245,37 @@ export const algorithms: AlgorithmDefinition[] = [
     },
     supportedLanguages: ['javascript', 'python', 'pseudocode'],
     useCases: ['Computational geometry', 'Collision detection', 'Nearest neighbor problems'],
+  },
+  // Greedy Algorithms
+  {
+    id: 'fractional-knapsack',
+    name: 'Fractional Knapsack',
+    category: 'greedy',
+    route: '/algorithms/greedy/fractional-knapsack',
+    description: 'Select items with maximum value using greedy approach, allowing fractional selection.',
+    longDescription: 'The Fractional Knapsack problem uses a greedy approach to maximize value. Items are sorted by value-to-weight ratio, and we take whole or partial items until the knapsack is full.',
+    tags: ['greedy', 'optimization', 'knapsack'],
+    complexity: {
+      time: { average: 'O(n log n)', worst: 'O(n log n)' },
+      space: 'O(n)',
+    },
+    supportedLanguages: ['javascript', 'python', 'pseudocode'],
+    useCases: ['Resource allocation', 'Investment portfolio', 'Loading cargo'],
+  },
+  {
+    id: 'optimal-merge',
+    name: 'Optimal Merge Pattern',
+    category: 'greedy',
+    route: '/algorithms/greedy/optimal-merge',
+    description: 'Merge files with minimum cost using a greedy strategy.',
+    longDescription: 'The Optimal Merge Pattern finds the minimum cost to merge multiple files. Using a min-heap, we repeatedly merge the two smallest files until only one remains.',
+    tags: ['greedy', 'heap', 'optimization'],
+    complexity: {
+      time: { average: 'O(n log n)', worst: 'O(n log n)' },
+      space: 'O(n)',
+    },
+    supportedLanguages: ['javascript', 'python', 'pseudocode'],
+    useCases: ['File compression', 'External sorting', 'Huffman coding'],
   },
 ];
 

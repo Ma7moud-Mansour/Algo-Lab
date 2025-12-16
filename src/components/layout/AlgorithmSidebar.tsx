@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Search, ChevronRight, ArrowUpDown, Search as SearchIcon, GitBranch, Database, Undo2, Layers, X } from 'lucide-react';
+import { Search, ChevronRight, ArrowUpDown, Search as SearchIcon, GitBranch, Database, Undo2, Layers, X, TrendingUp, Sparkles } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -20,7 +20,8 @@ const categoryIcons: Record<AlgorithmCategory, React.ComponentType<{ className?:
   'data-structures': Database,
   backtracking: Undo2,
   'dynamic-programming': Layers,
-  other: Layers,
+  greedy: TrendingUp,
+  other: Sparkles,
 };
 
 export function AlgorithmSidebar({ isOpen, onClose }: AlgorithmSidebarProps) {
@@ -68,7 +69,7 @@ export function AlgorithmSidebar({ isOpen, onClose }: AlgorithmSidebarProps) {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed top-16 left-0 z-40 h-[calc(100vh-4rem)] w-72 glass-panel border-r border-panel-border transition-transform duration-300 lg:translate-x-0',
+          'fixed top-16 left-0 z-40 h-[calc(100vh-4rem)] w-72 glass-panel border-r border-panel-border transition-transform duration-300 ease-in-out',
           isOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
