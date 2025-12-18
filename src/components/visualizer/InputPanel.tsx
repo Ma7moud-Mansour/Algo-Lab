@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 
 interface InputPanelProps {
-  type: 'sorting' | 'searching' | 'graph' | 'nqueens' | 'fibonacci' | 'hanoi' | 'closestpair' | 'knapsack' | 'mergepattern';
+  type: 'sorting' | 'searching' | 'graph' | 'nqueens' | 'fibonacci' | 'hanoi' | 'closestpair' | 'knapsack' | 'mergepattern' | 'sudoku' | 'maze' | 'knight';
   onInputChange: (input: Record<string, unknown>) => void;
   className?: string;
 }
@@ -19,6 +19,8 @@ export function InputPanel({ type, onInputChange, className }: InputPanelProps) 
   const [knapsackCapacity, setKnapsackCapacity] = useState('50');
   const [knapsackItems, setKnapsackItems] = useState('10:60, 20:100, 30:120');
   const [fileSizes, setFileSizes] = useState('2, 3, 4, 5, 6');
+  const [mazeSize, setMazeSize] = useState('5');
+  const [knightSize, setKnightSize] = useState('5');
   const [error, setError] = useState('');
 
   const parseArray = (input: string): number[] | null => {
@@ -93,6 +95,36 @@ export function InputPanel({ type, onInputChange, className }: InputPanelProps) 
       return;
     }
 
+    if (type === 'sudoku') {
+      // Use default puzzle - no custom input for now
+      onInputChange({});
+      return;
+    }
+
+    if (type === 'maze') {
+      const size = parseInt(mazeSize, 10);
+      if (isNaN(size) || size < 3 || size > 8) {
+        setError('Maze size must be between 3 and 8');
+        return;
+      }
+      // Generate random maze
+      const maze = Array(size).fill(0).map(() => Array(size).fill(0).map(() => Math.random() > 0.3 ? 1 : 0));
+      maze[0][0] = 1;
+      maze[size - 1][size - 1] = 1;
+      onInputChange({ maze, size });
+      return;
+    }
+
+    if (type === 'knight') {
+      const size = parseInt(knightSize, 10);
+      if (isNaN(size) || size < 5 || size > 8) {
+        setError('Board size must be between 5 and 8');
+        return;
+      }
+      onInputChange({ size, startX: 0, startY: 0 });
+      return;
+    }
+
     const array = parseArray(arrayInput);
     if (!array) {
       setError('Please enter valid comma-separated numbers');
@@ -152,6 +184,28 @@ export function InputPanel({ type, onInputChange, className }: InputPanelProps) 
       const sizes = Array.from({ length: numFiles }, () => Math.floor(Math.random() * 20) + 2);
       setFileSizes(sizes.join(', '));
       onInputChange({ fileSizes: sizes });
+      return;
+    }
+
+    if (type === 'sudoku') {
+      onInputChange({});
+      return;
+    }
+
+    if (type === 'maze') {
+      const size = Math.floor(Math.random() * 3) + 4;
+      setMazeSize(size.toString());
+      const maze = Array(size).fill(0).map(() => Array(size).fill(0).map(() => Math.random() > 0.3 ? 1 : 0));
+      maze[0][0] = 1;
+      maze[size - 1][size - 1] = 1;
+      onInputChange({ maze, size });
+      return;
+    }
+
+    if (type === 'knight') {
+      const size = Math.floor(Math.random() * 3) + 5;
+      setKnightSize(size.toString());
+      onInputChange({ size, startX: 0, startY: 0 });
       return;
     }
 
@@ -247,6 +301,48 @@ export function InputPanel({ type, onInputChange, className }: InputPanelProps) 
             onChange={(e) => setFileSizes(e.target.value)}
             placeholder="e.g., 2, 3, 4, 5, 6"
             className="font-mono text-sm bg-muted/50 border-panel-border"
+          />
+        </div>
+      );
+    }
+
+    if (type === 'sudoku') {
+      return (
+        <p className="text-xs text-muted-foreground">
+          Using default Sudoku puzzle. Click Apply to start.
+        </p>
+      );
+    }
+
+    if (type === 'maze') {
+      return (
+        <div className="space-y-1.5">
+          <Label htmlFor="maze-input" className="text-xs text-muted-foreground">
+            Maze Size (3-8)
+          </Label>
+          <Input
+            id="maze-input"
+            value={mazeSize}
+            onChange={(e) => setMazeSize(e.target.value)}
+            placeholder="e.g., 5"
+            className="font-mono text-sm bg-muted/50 border-panel-border w-32"
+          />
+        </div>
+      );
+    }
+
+    if (type === 'knight') {
+      return (
+        <div className="space-y-1.5">
+          <Label htmlFor="knight-input" className="text-xs text-muted-foreground">
+            Board Size (5-8)
+          </Label>
+          <Input
+            id="knight-input"
+            value={knightSize}
+            onChange={(e) => setKnightSize(e.target.value)}
+            placeholder="e.g., 5"
+            className="font-mono text-sm bg-muted/50 border-panel-border w-32"
           />
         </div>
       );
