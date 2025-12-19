@@ -15,8 +15,8 @@ export function MazeVisualizer({ currentStep, className }: MazeVisualizerProps) 
   const solution = (payload.solution as number[][]) || [];
   const visited = (payload.visited as boolean[][]) || [];
   const size = (payload.size as number) || 5;
-  const currentX = payload.x as number | undefined;
-  const currentY = payload.y as number | undefined;
+  const tryX = payload.x as number | undefined;
+  const tryY = payload.y as number | undefined;
   const kind = currentStep?.kind || 'init';
   const solved = payload.solved as boolean | undefined;
 
@@ -24,17 +24,56 @@ export function MazeVisualizer({ currentStep, className }: MazeVisualizerProps) 
   const cellSize = useMemo(() => Math.floor(MAX_GRID_DIMENSION / size), [size]);
   const gridDimension = cellSize * size;
 
+  // Derive the rat's current position from the active path in the solution matrix
+  const currentPosition = useMemo(() => {
+    let pos: { row: number; col: number } | null = null;
+
+    for (let r = 0; r < size; r++) {
+      for (let c = 0; c < size; c++) {
+        if (solution[r]?.[c] === 1) {
+          if (!pos || r + c > pos.row + pos.col) {
+            pos = { row: r, col: c };
+          }
+        }
+      }
+    }
+
+    // Fallback to start cell if no path is marked yet
+    if (!pos && maze[0]?.[0] === 1) {
+      return { row: 0, col: 0 };
+    }
+
+    return pos;
+  }, [solution, maze, size]);
+
+  const currentRow = currentPosition?.row;
+  const currentCol = currentPosition?.col;
+
   const getCellClass = (row: number, col: number) => {
     const isWall = maze[row]?.[col] === 0;
     const isPath = solution[row]?.[col] === 1;
     const isVisited = visited[row]?.[col];
-    const isCurrent = row === currentX && col === currentY;
+    const isCurrent = row === currentRow && col === currentCol;
+    const isTryTarget = tryX !== undefined && tryY !== undefined && row === tryX && col === tryY;
+    
+    // Show red highlight when trying a cell that is invalid
+    // - For 'blocked' kind: always show red (explicitly a failed attempt)
+    // - For 'try-cell' kind: show red if cell is wall or already visited
+    const isTryingInvalidCell = 
+      isTryTarget && (
+        kind === 'blocked' || 
+        (kind === 'try-cell' && (isWall || isVisited || maze[row]?.[col] !== 1))
+      );
+    
     const isStart = row === 0 && col === 0;
     const isEnd = row === size - 1 && col === size - 1;
     
     let stateClass = 'bg-background/50';
 
-    if (isWall) {
+    // Red highlight for invalid cells being tried - highest visual priority
+    if (isTryingInvalidCell) {
+      stateClass = '!bg-red-600 !ring-4 !ring-red-800 shadow-[0_0_20px_rgba(220,38,38,1)]';
+    } else if (isWall) {
       stateClass = 'bg-slate-800 dark:bg-slate-900';
     } else if (isCurrent) {
       if (kind === 'backtrack') {
@@ -68,7 +107,7 @@ export function MazeVisualizer({ currentStep, className }: MazeVisualizerProps) 
 
   const getCellContent = (row: number, col: number) => {
     const isWall = maze[row]?.[col] === 0;
-    const isCurrent = row === currentX && col === currentY;
+    const isCurrent = row === currentRow && col === currentCol;
     const isStart = row === 0 && col === 0;
     const isEnd = row === size - 1 && col === size - 1;
 
@@ -80,8 +119,8 @@ export function MazeVisualizer({ currentStep, className }: MazeVisualizerProps) 
   };
 
   return (
-    <div className={cn('glass-panel p-4 overflow-hidden', className)}>
-      <div className="flex flex-col items-center justify-center h-full">
+    <div className={cn('glass-panel p-4', className)}>
+      <div className="flex flex-col items-center justify-center">
         <h3 className="text-sm font-medium text-muted-foreground mb-3">Rat in a Maze ({size}×{size})</h3>
         
         {/* Fixed-size container */}
@@ -146,6 +185,10 @@ export function MazeVisualizer({ currentStep, className }: MazeVisualizerProps) 
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 bg-secondary/70 rounded" />
             <span className="text-muted-foreground">Current</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <div className="w-3 h-3 bg-red-500 rounded ring-1 ring-red-600" />
+            <span className="text-muted-foreground">Trying (Invalid)</span>
           </div>
         </div>
       </div>

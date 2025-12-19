@@ -35,9 +35,12 @@ export function HanoiVisualizer({ currentStep, className }: HanoiVisualizerProps
   useEffect(() => {
     const updateDimensions = () => {
       if (containerRef.current) {
+        const { clientWidth } = containerRef.current;
+        // Maintain a pleasant aspect ratio while letting height be content-driven
+        const height = Math.max(260, clientWidth * 0.5);
         setDimensions({
-          width: containerRef.current.clientWidth,
-          height: containerRef.current.clientHeight,
+          width: clientWidth,
+          height,
         });
       }
     };
@@ -73,9 +76,9 @@ export function HanoiVisualizer({ currentStep, className }: HanoiVisualizerProps
   };
 
   return (
-    <div ref={containerRef} className={cn('glass-panel p-4 relative overflow-hidden', className)}>
+    <div ref={containerRef} className={cn('glass-panel p-4', className)}>
       {/* Header */}
-      <div className="absolute top-2 left-4 right-4 flex justify-between items-center z-10">
+      <div className="flex justify-between items-center mb-3">
         <span className="text-xs font-medium text-muted-foreground">Tower of Hanoi</span>
         {state?.recursionDepth !== undefined && (
           <span className="text-xs px-2 py-1 rounded bg-primary/20 text-primary">
@@ -85,7 +88,13 @@ export function HanoiVisualizer({ currentStep, className }: HanoiVisualizerProps
       </div>
 
       {/* Visualization */}
-      <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} className="mt-6">
+      <div className="w-full overflow-x-hidden">
+        <svg
+          width="100%"
+          height={height}
+          viewBox={`0 0 ${width} ${height}`}
+          className="mt-2 block"
+        >
         {/* Base platform */}
         <rect
           x={20}
@@ -172,7 +181,7 @@ export function HanoiVisualizer({ currentStep, className }: HanoiVisualizerProps
           );
         })}
 
-        {/* Recursion indicator */}
+          {/* Recursion indicator */}
         {state?.isBaseCase !== undefined && (
           <g>
             <rect
@@ -193,14 +202,17 @@ export function HanoiVisualizer({ currentStep, className }: HanoiVisualizerProps
               {state.isBaseCase ? 'Base Case' : 'Recursive'}
             </text>
           </g>
-        )}
-      </svg>
+          )}
+        </svg>
+      </div>
 
       {/* Step description */}
       {currentStep?.description && (
-        <div className="absolute bottom-2 left-4 right-4">
+        <div className="mt-4">
           <div className="bg-background/80 backdrop-blur-sm rounded-lg px-3 py-2 border border-border">
-            <p className="text-xs text-center text-muted-foreground">{currentStep.description}</p>
+            <p className="text-xs text-center text-muted-foreground">
+              {currentStep.description}
+            </p>
           </div>
         </div>
       )}

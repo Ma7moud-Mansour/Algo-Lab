@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
+import { generateSudokuPuzzle } from '@/lib/sudoku';
 
 interface InputPanelProps {
   type: 'sorting' | 'searching' | 'graph' | 'nqueens' | 'fibonacci' | 'hanoi' | 'closestpair' | 'knapsack' | 'mergepattern' | 'sudoku' | 'maze' | 'knight';
@@ -188,7 +189,8 @@ export function InputPanel({ type, onInputChange, className }: InputPanelProps) 
     }
 
     if (type === 'sudoku') {
-      onInputChange({});
+      const board = generateSudokuPuzzle();
+      onInputChange({ board });
       return;
     }
 
@@ -309,7 +311,7 @@ export function InputPanel({ type, onInputChange, className }: InputPanelProps) 
     if (type === 'sudoku') {
       return (
         <p className="text-xs text-muted-foreground">
-          Using default Sudoku puzzle. Click Apply to start.
+          Click Randomize to generate a new Sudoku puzzle.
         </p>
       );
     }
@@ -398,10 +400,12 @@ export function InputPanel({ type, onInputChange, className }: InputPanelProps) 
       <div className="space-y-3">
         {renderInputFields()}
         {error && <p className="text-xs text-destructive">{error}</p>}
-        <Button onClick={handleApply} className="w-full h-9 gap-2 bg-primary/80 hover:bg-primary">
-          Apply
-          <ArrowRight className="h-4 w-4" />
-        </Button>
+        {type !== 'sudoku' && (
+          <Button onClick={handleApply} className="w-full h-9 gap-2 bg-primary/80 hover:bg-primary">
+            Apply
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        )}
       </div>
     </div>
   );

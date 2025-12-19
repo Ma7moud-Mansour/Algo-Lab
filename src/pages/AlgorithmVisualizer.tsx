@@ -206,13 +206,25 @@ export default function AlgorithmVisualizer() {
           {visualizerType === 'graph' && <GraphVisualizer currentStep={currentStep} className="h-[300px]" />}
           {visualizerType === 'grid' && <GridVisualizer currentStep={currentStep} className="h-[300px]" />}
           {visualizerType === 'dp' && <DPVisualizer currentStep={currentStep} className="h-[300px]" />}
-          {visualizerType === 'hanoi' && <HanoiVisualizer currentStep={currentStep} className="h-[300px]" />}
+          {visualizerType === 'hanoi' && (
+            <HanoiVisualizer currentStep={currentStep} className="min-h-[320px]" />
+          )}
           {visualizerType === 'closestpair' && <ClosestPairVisualizer currentStep={currentStep} className="h-[300px]" />}
           {visualizerType === 'knapsack' && <KnapsackVisualizer currentStep={currentStep} className="h-[300px]" />}
           {visualizerType === 'mergepattern' && <MergePatternVisualizer currentStep={currentStep} className="h-[300px]" />}
-          {visualizerType === 'sudoku' && <SudokuVisualizer currentStep={currentStep} className="h-[300px]" />}
-          {visualizerType === 'maze' && <MazeVisualizer currentStep={currentStep} className="h-[300px]" />}
-          {visualizerType === 'knight' && <KnightVisualizer currentStep={currentStep} className="h-[300px]" />}
+          {visualizerType === 'sudoku' && (
+            <SudokuVisualizer 
+              currentStep={currentStep} 
+              initialBoard={(currentInput as SudokuInput)?.board}
+              className="min-h-[320px]" 
+            />
+          )}
+          {visualizerType === 'maze' && (
+            <MazeVisualizer currentStep={currentStep} className="min-h-[300px]" />
+          )}
+          {visualizerType === 'knight' && (
+            <KnightVisualizer currentStep={currentStep} className="min-h-[300px]" />
+          )}
           {visualizerType === 'mergepattern' && <MergePatternVisualizer currentStep={currentStep} className="h-[300px]" />}
           <ControlPanel executionState={executionState} speed={speed} progress={progress} onRun={run} onPause={pause} onStep={step} onReset={reset} onSpeedChange={setSpeed} />
         </div>

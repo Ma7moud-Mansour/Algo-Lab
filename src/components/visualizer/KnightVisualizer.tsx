@@ -78,8 +78,8 @@ export function KnightVisualizer({ currentStep, className }: KnightVisualizerPro
   };
 
   return (
-    <div className={cn('glass-panel p-4 overflow-hidden', className)}>
-      <div className="flex flex-col items-center justify-center h-full">
+    <div className={cn('glass-panel p-4', className)}>
+      <div className="flex flex-col items-center justify-center">
         <h3 className="text-sm font-medium text-muted-foreground mb-2">Knight's Tour</h3>
         
         {/* Stats */}
