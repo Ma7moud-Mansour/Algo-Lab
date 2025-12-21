@@ -79,11 +79,25 @@ export function ArrayVisualizer({ currentStep, className }: ArrayVisualizerProps
     );
   }
 
+  // Calculate min value to handle negative numbers
+  const minValue = useMemo(() => {
+    if (array.length === 0) return 0;
+    return Math.min(...array);
+  }, [array]);
+
+  // Calculate the range for proper scaling
+  const valueRange = useMemo(() => {
+    return maxValue - Math.min(minValue, 0);
+  }, [maxValue, minValue]);
+
   return (
     <div className={cn('glass-panel p-6', className)}>
       <div className="h-full flex items-end justify-center gap-1 md:gap-2">
         {array.map((value, index) => {
-          const height = (value / maxValue) * 100;
+          // Calculate height as percentage of the range, ensuring minimum visibility
+          const normalizedValue = value - Math.min(minValue, 0);
+          const heightPercent = valueRange > 0 ? (normalizedValue / valueRange) * 100 : 50;
+          
           const isComparing = compareIndices.includes(index);
           const isSwapping = swapIndices.includes(index);
           const isSorted = sortedIndices.includes(index);
@@ -96,41 +110,44 @@ export function ArrayVisualizer({ currentStep, className }: ArrayVisualizerProps
             <div
               key={index}
               className="flex flex-col items-center gap-2 flex-1 max-w-16"
+              style={{ height: '100%' }}
             >
-              <div
-                className={cn(
-                  'w-full rounded-t-md transition-all duration-300 relative',
-                  isFound && 'bg-success glow-secondary animate-pulse',
-                  isMid && 'bg-info glow-secondary',
-                  isComparing && !isMid && 'bg-secondary glow-secondary',
-                  isSwapping && 'bg-primary glow-primary animate-pulse',
-                  isSorted && 'bg-success',
-                  isPivot && 'bg-secondary glow-secondary',
-                  isInRange && !isMid && !isFound && 'bg-accent',
-                  !isComparing && !isSwapping && !isSorted && !isPivot && !isInRange && !isMid && !isFound && 'bg-muted'
-                )}
-                style={{ 
-                  height: `${Math.max(height, 10)}%`,
-                  minHeight: '20px',
-                }}
-              >
-                {(isComparing || isSwapping || isPivot || isMid || isFound) && (
-                  <div className="absolute -top-8 left-1/2 -translate-x-1/2">
-                    <span className={cn(
-                      'text-xs font-bold px-1.5 py-0.5 rounded',
-                      isFound && 'bg-success text-success-foreground',
-                      isMid && !isFound && 'bg-info text-foreground',
-                      isPivot && 'bg-secondary text-secondary-foreground',
-                      isSwapping && 'bg-primary text-primary-foreground',
-                      isComparing && !isMid && 'bg-secondary/80 text-secondary-foreground'
-                    )}>
-                      {isFound ? '✓' : isMid ? 'mid' : isPivot ? 'P' : isSwapping ? '↔' : '⟷'}
-                    </span>
-                  </div>
-                )}
+              <div className="flex-1 w-full flex items-end justify-center">
+                <div
+                  className={cn(
+                    'w-full rounded-t-md transition-all duration-300 relative',
+                    isFound && 'bg-success glow-secondary animate-pulse',
+                    isMid && 'bg-info glow-secondary',
+                    isComparing && !isMid && 'bg-secondary glow-secondary',
+                    isSwapping && 'bg-primary glow-primary animate-pulse',
+                    isSorted && 'bg-success',
+                    isPivot && 'bg-secondary glow-secondary',
+                    isInRange && !isMid && !isFound && 'bg-accent',
+                    !isComparing && !isSwapping && !isSorted && !isPivot && !isInRange && !isMid && !isFound && 'bg-muted'
+                  )}
+                  style={{ 
+                    height: `${Math.max(heightPercent, 8)}%`,
+                    minHeight: '16px',
+                  }}
+                >
+                  {(isComparing || isSwapping || isPivot || isMid || isFound) && (
+                    <div className="absolute -top-8 left-1/2 -translate-x-1/2">
+                      <span className={cn(
+                        'text-xs font-bold px-1.5 py-0.5 rounded',
+                        isFound && 'bg-success text-success-foreground',
+                        isMid && !isFound && 'bg-info text-foreground',
+                        isPivot && 'bg-secondary text-secondary-foreground',
+                        isSwapping && 'bg-primary text-primary-foreground',
+                        isComparing && !isMid && 'bg-secondary/80 text-secondary-foreground'
+                      )}>
+                        {isFound ? '✓' : isMid ? 'mid' : isPivot ? 'P' : isSwapping ? '↔' : '⟷'}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
               <span className={cn(
-                'text-xs font-mono transition-colors',
+                'text-xs font-mono transition-colors flex-shrink-0',
                 (isComparing || isSwapping || isMid || isFound) ? 'text-foreground font-bold' : 'text-muted-foreground'
               )}>
                 {value}

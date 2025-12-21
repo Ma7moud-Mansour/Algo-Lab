@@ -153,15 +153,19 @@ export default function AlgorithmVisualizer() {
 
   const {
     currentStep,
+    currentStepIndex,
     executionState,
     speed,
     logs,
     run,
     pause,
     step,
+    stepBack,
     reset,
     setSpeed,
+    goToStep,
     progress,
+    totalSteps,
   } = useVisualizationEngine({ steps });
 
   const currentCode: AlgorithmCode = useMemo(() => {
@@ -252,8 +256,20 @@ export default function AlgorithmVisualizer() {
           {visualizerType === 'bellmanford' && (
             <BellmanFordVisualizer currentStep={currentStep} className="min-h-[350px]" />
           )}
-          {visualizerType === 'mergepattern' && <MergePatternVisualizer currentStep={currentStep} className="h-[300px]" />}
-          <ControlPanel executionState={executionState} speed={speed} progress={progress} onRun={run} onPause={pause} onStep={step} onReset={reset} onSpeedChange={setSpeed} />
+          <ControlPanel 
+            executionState={executionState} 
+            speed={speed} 
+            progress={progress}
+            currentStepIndex={currentStepIndex}
+            totalSteps={totalSteps}
+            onRun={run} 
+            onPause={pause} 
+            onStep={step}
+            onStepBack={stepBack}
+            onReset={reset} 
+            onSpeedChange={setSpeed}
+            onGoToStep={goToStep}
+          />
         </div>
       </div>
 

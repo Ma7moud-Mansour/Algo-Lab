@@ -15,9 +15,12 @@ interface UseVisualizationEngineReturn {
   run: () => void;
   pause: () => void;
   step: () => void;
+  stepBack: () => void;
   reset: () => void;
   setSpeed: (speed: ExecutionSpeed) => void;
+  goToStep: (index: number) => void;
   progress: number;
+  totalSteps: number;
 }
 
 const SPEED_DELAYS: Record<ExecutionSpeed, number> = {
@@ -157,6 +160,32 @@ export function useVisualizationEngine({
     }
   }, [currentStepIndex, executeStep, clearTimer, addLog]);
 
+  const stepBack = useCallback(() => {
+    if (stepsRef.current.length === 0) return;
+    
+    clearTimer();
+    setExecutionState('paused');
+    
+    const prevIndex = currentStepIndex - 1;
+    if (prevIndex >= 0) {
+      executeStep(prevIndex);
+      addLog('Stepped back');
+    } else if (currentStepIndex === 0) {
+      setCurrentStepIndex(-1);
+      addLog('Reset to initial state');
+    }
+  }, [currentStepIndex, executeStep, clearTimer, addLog]);
+
+  const goToStep = useCallback((index: number) => {
+    if (stepsRef.current.length === 0) return;
+    if (index < 0 || index >= stepsRef.current.length) return;
+    
+    clearTimer();
+    setExecutionState('paused');
+    executeStep(index);
+    addLog(`Jumped to step ${index + 1}`);
+  }, [executeStep, clearTimer, addLog]);
+
   const reset = useCallback(() => {
     clearTimer();
     setCurrentStepIndex(-1);
@@ -192,8 +221,11 @@ export function useVisualizationEngine({
     run,
     pause,
     step,
+    stepBack,
     reset,
     setSpeed,
+    goToStep,
     progress,
+    totalSteps: steps.length,
   };
 }

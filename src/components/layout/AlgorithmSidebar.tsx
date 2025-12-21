@@ -79,7 +79,7 @@ export function AlgorithmSidebar({ isOpen, onClose }: AlgorithmSidebarProps) {
     const dynamicProgramming = [
       { id: 'knapsack-01', name: '0/1 Knapsack' },
       { id: 'lcs', name: 'Longest Common Subsequence' },
-      { id: 'fibonacci', name: 'Fibonacci (DP)' },
+      { id: 'bellman-ford', name: 'Bellman-Ford' },
     ];
 
     return [

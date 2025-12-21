@@ -1,15 +1,16 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { VisualizationStep } from '@/types/algorithm';
 import { cn } from '@/lib/utils';
 
 interface KnightVisualizerProps {
   currentStep: VisualizationStep | null;
+  onStartPositionSelect?: (x: number, y: number) => void;
   className?: string;
 }
 
 const MAX_GRID_DIMENSION = 280; // Maximum grid dimension in pixels
 
-export function KnightVisualizer({ currentStep, className }: KnightVisualizerProps) {
+export function KnightVisualizer({ currentStep, onStartPositionSelect, className }: KnightVisualizerProps) {
   const payload = currentStep?.payload || {};
   const board = (payload.board as number[][]) || [];
   const size = (payload.size as number) || 5;
@@ -22,9 +23,30 @@ export function KnightVisualizer({ currentStep, className }: KnightVisualizerPro
   const kind = currentStep?.kind || 'init';
   const solved = payload.solved as boolean | undefined;
 
+  // Track if we're in selection mode (before algorithm starts)
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedStart, setSelectedStart] = useState<{ x: number; y: number } | null>(null);
+  const [hoverCell, setHoverCell] = useState<{ x: number; y: number } | null>(null);
+
+  // Enable selection mode when at init step and no moves have been made
+  useEffect(() => {
+    if (kind === 'init' && !board.some(row => row.some(cell => cell >= 0))) {
+      setSelectionMode(true);
+    } else {
+      setSelectionMode(false);
+    }
+  }, [kind, board]);
+
   // Calculate fixed cell size based on grid size
   const cellSize = useMemo(() => Math.floor(MAX_GRID_DIMENSION / size), [size]);
   const gridDimension = cellSize * size;
+
+  const handleCellClick = (row: number, col: number) => {
+    if (selectionMode && onStartPositionSelect) {
+      setSelectedStart({ x: row, y: col });
+      onStartPositionSelect(row, col);
+    }
+  };
 
   const getCellClass = (row: number, col: number) => {
     const value = board[row]?.[col] ?? -1;
@@ -32,10 +54,20 @@ export function KnightVisualizer({ currentStep, className }: KnightVisualizerPro
     const isNext = row === nextX && col === nextY;
     const isVisited = value >= 0;
     const isChessWhite = (row + col) % 2 === 0;
+    const isHovered = selectionMode && hoverCell?.x === row && hoverCell?.y === col;
+    const isSelected = selectedStart?.x === row && selectedStart?.y === col;
     
     let stateClass = isChessWhite ? 'bg-background/70' : 'bg-muted/50';
 
-    if (isCurrent) {
+    if (selectionMode) {
+      if (isSelected) {
+        stateClass = 'bg-primary/70 ring-2 ring-inset ring-primary';
+      } else if (isHovered) {
+        stateClass = 'bg-secondary/50 ring-2 ring-inset ring-secondary cursor-pointer';
+      } else {
+        stateClass = cn(stateClass, 'cursor-pointer hover:bg-secondary/30');
+      }
+    } else if (isCurrent) {
       if (kind === 'backtrack') {
         stateClass = 'bg-destructive/50 ring-2 ring-inset ring-destructive';
       } else {
@@ -61,6 +93,13 @@ export function KnightVisualizer({ currentStep, className }: KnightVisualizerPro
   };
 
   const getCellContent = (row: number, col: number) => {
+    if (selectionMode) {
+      if (selectedStart?.x === row && selectedStart?.y === col) {
+        return '♞';
+      }
+      return '';
+    }
+
     const value = board[row]?.[col] ?? -1;
     const isCurrent = row === currentX && col === currentY;
     const isNext = row === nextX && col === nextY && kind === 'try-move';
@@ -82,6 +121,15 @@ export function KnightVisualizer({ currentStep, className }: KnightVisualizerPro
       <div className="flex flex-col items-center justify-center">
         <h3 className="text-sm font-medium text-muted-foreground mb-2">Knight's Tour</h3>
         
+        {/* Selection Mode Label */}
+        {selectionMode && (
+          <div className="mb-3 px-3 py-1.5 bg-secondary/20 rounded-lg border border-secondary/30">
+            <p className="text-sm text-secondary font-medium text-center">
+              Click a cell to select start position
+            </p>
+          </div>
+        )}
+
         {/* Stats */}
         <div className="flex gap-4 mb-2 text-xs flex-shrink-0 min-h-[20px]">
           <span className="text-muted-foreground">
@@ -121,6 +169,9 @@ export function KnightVisualizer({ currentStep, className }: KnightVisualizerPro
                     height: cellSize, 
                     fontSize: cellSize > 40 ? '0.875rem' : '0.7rem' 
                   }}
+                  onClick={() => handleCellClick(rowIdx, colIdx)}
+                  onMouseEnter={() => selectionMode && setHoverCell({ x: rowIdx, y: colIdx })}
+                  onMouseLeave={() => setHoverCell(null)}
                 >
                   {getCellContent(rowIdx, colIdx)}
                 </div>
@@ -132,7 +183,11 @@ export function KnightVisualizer({ currentStep, className }: KnightVisualizerPro
         {/* Status panel */}
         <div className="mt-3 text-center min-h-[40px]">
           <p className="text-sm text-muted-foreground line-clamp-2">
-            {currentStep?.description || 'Ready to start tour'}
+            {selectionMode 
+              ? (selectedStart 
+                  ? `Start position: (${selectedStart.x}, ${selectedStart.y}) - Click Run to start`
+                  : 'Select a starting cell for the knight')
+              : (currentStep?.description || 'Ready to start tour')}
           </p>
           {kind === 'complete' && (
             <p className={cn(
