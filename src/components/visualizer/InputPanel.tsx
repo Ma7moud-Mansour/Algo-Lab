@@ -9,6 +9,7 @@ import { RealLifeUsageMaze } from './RealLifeUsageMaze';
 import { RealLifeUsageBubble } from './RealLifeUsageBubble';
 import { RealLifeUsageKnapsack } from './RealLifeUsageKnapsack';
 import { RealLifeUsageClosestPair } from './RealLifeUsageClosestPair';
+import { RealLifeUsageKnight } from './RealLifeUsageKnight';
 
 interface InputPanelProps {
   type: 'sorting' | 'searching' | 'graph' | 'nqueens' | 'fibonacci' | 'hanoi' | 'closestpair' | 'knapsack' | 'mergepattern' | 'sudoku' | 'maze' | 'knight' | 'knapsack01' | 'lcs' | 'bellmanford';
@@ -625,6 +626,20 @@ export function InputPanel({ type, onInputChange, className, algorithmId }: Inpu
             </Button>
 
             {showRealLife && <RealLifeUsageClosestPair />}
+          </>
+        )}
+
+        {algorithmId === 'knight-tour' && (
+          <>
+            <Button
+              onClick={() => setShowRealLife(!showRealLife)}
+              variant="outline"
+              className="w-full mt-2 border-primary/50 text-primary hover:bg-primary/10"
+            >
+              شوف الخوارزمية دي في الحياة الواقعية
+            </Button>
+
+            {showRealLife && <RealLifeUsageKnight />}
           </>
         )}
       </div>
