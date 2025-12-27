@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { cn } from '@/lib/utils';
-import { VisualizationStep } from '@/types/algorithm';
+import type { VisualizationStep } from '@/types/algorithm';
 
 interface ArrayVisualizerProps {
   currentStep: VisualizationStep | null;
@@ -71,14 +71,6 @@ export function ArrayVisualizer({ currentStep, className }: ArrayVisualizerProps
     return Math.max(...array);
   }, [array]);
 
-  if (array.length === 0) {
-    return (
-      <div className={cn('glass-panel flex items-center justify-center', className)}>
-        <p className="text-muted-foreground">No data to visualize</p>
-      </div>
-    );
-  }
-
   // Calculate min value to handle negative numbers
   const minValue = useMemo(() => {
     if (array.length === 0) return 0;
@@ -89,6 +81,14 @@ export function ArrayVisualizer({ currentStep, className }: ArrayVisualizerProps
   const valueRange = useMemo(() => {
     return maxValue - Math.min(minValue, 0);
   }, [maxValue, minValue]);
+
+  if (array.length === 0) {
+    return (
+      <div className={cn('glass-panel flex items-center justify-center', className)}>
+        <p className="text-muted-foreground">No data to visualize</p>
+      </div>
+    );
+  }
 
   return (
     <div className={cn('glass-panel p-6', className)}>
