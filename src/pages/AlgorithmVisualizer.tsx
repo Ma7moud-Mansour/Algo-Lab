@@ -224,7 +224,7 @@ export default function AlgorithmVisualizer() {
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-6">
         <div className="space-y-4">
           <CodePanel code={currentCode} highlightedLine={currentStep?.codeLine} className="h-[400px]" />
-          <InputPanel type={inputType} onInputChange={handleInputChange} />
+          <InputPanel type={inputType} onInputChange={handleInputChange} algorithmId={id} />
         </div>
         <div className="space-y-4">
           {visualizerType === 'array' && <ArrayVisualizer currentStep={currentStep} className="h-[300px]" />}

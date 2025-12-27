@@ -6,14 +6,16 @@ import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { generateSudokuPuzzle } from '@/lib/sudoku';
 import { RealLifeUsageMaze } from './RealLifeUsageMaze';
+import { RealLifeUsageBubble } from './RealLifeUsageBubble';
 
 interface InputPanelProps {
   type: 'sorting' | 'searching' | 'graph' | 'nqueens' | 'fibonacci' | 'hanoi' | 'closestpair' | 'knapsack' | 'mergepattern' | 'sudoku' | 'maze' | 'knight' | 'knapsack01' | 'lcs' | 'bellmanford';
   onInputChange: (input: Record<string, unknown>) => void;
   className?: string;
+  algorithmId?: string;
 }
 
-export function InputPanel({ type, onInputChange, className }: InputPanelProps) {
+export function InputPanel({ type, onInputChange, className, algorithmId }: InputPanelProps) {
   const [arrayInput, setArrayInput] = useState('64, 34, 25, 12, 22, 11, 90');
   const [targetInput, setTargetInput] = useState('23');
   const [numDisks, setNumDisks] = useState('4');
@@ -579,6 +581,20 @@ export function InputPanel({ type, onInputChange, className }: InputPanelProps) 
             </Button>
 
             {showRealLife && <RealLifeUsageMaze />}
+          </>
+        )}
+
+        {algorithmId === 'bubble-sort' && (
+          <>
+            <Button
+              onClick={() => setShowRealLife(!showRealLife)}
+              variant="outline"
+              className="w-full mt-2 border-primary/50 text-primary hover:bg-primary/10"
+            >
+              شوف الخوارزمية دي في الحياة الواقعية
+            </Button>
+
+            {showRealLife && <RealLifeUsageBubble />}
           </>
         )}
       </div>
