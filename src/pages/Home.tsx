@@ -28,7 +28,9 @@ export default function Home() {
             <span className="text-sm text-primary font-medium">Interactive Algorithm Learning</span>
           </div>
 
-
+          <p className="text-lg md:text-xl font-semibold text-primary mb-4 animate-fade-in-up">
+            Welcome RANO
+          </p>
 
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
             <span className="text-foreground">Visualize Algorithms</span>
