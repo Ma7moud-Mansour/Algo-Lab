@@ -29,7 +29,7 @@ export default function Home() {
           </div>
 
           <p className="text-lg md:text-xl font-semibold text-primary mb-4 animate-fade-in-up">
-            Welcome RANO
+            Welcome, young programmer!
           </p>
 
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
