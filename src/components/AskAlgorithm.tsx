@@ -34,14 +34,22 @@ export const AskAlgorithm: React.FC<AskAlgorithmProps> = ({ algorithmName }) => 
                 }),
             });
 
-            const data = await response.json();
+            const text = await response.text();
+            let data;
+            try {
+                data = JSON.parse(text);
+            } catch (e) {
+                console.error("Failed to parse JSON response:", text);
+                throw new Error(`Server response was not valid JSON. Status: ${response.status}`);
+            }
 
             if (!response.ok) {
-                throw new Error(data.error || 'Failed to get answer');
+                throw new Error(data.error || `Error ${response.status}: ${text}`);
             }
 
             setAnswer(data.answer);
         } catch (err: any) {
+            console.error("Chatbot Error:", err);
             setError(err.message || 'Something went wrong. Please try again.');
         } finally {
             setIsLoading(false);
