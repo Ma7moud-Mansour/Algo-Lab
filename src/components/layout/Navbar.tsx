@@ -18,8 +18,9 @@ export function Navbar({ onMenuToggle, showMenuButton = false, sidebarOpen = fal
     { to: '/', label: 'Home' },
     { to: '/algorithm-battle', label: 'Algorithm Battle' },
     { to: '/learning-test', label: 'Learning Test' },
-    { to: '/algorithms', label: 'Algorithms' },
-    { to: '/docs', label: 'Docs' },
+    { to: "/algorithms", label: "Algorithms" },
+    { to: "/algorithm-decision", label: "Decision Tree" },
+    { to: "/algorithm-battle", label: "Battle Mode" },
   ];
 
   return (
