@@ -72,7 +72,7 @@ export const AskAlgorithm: React.FC<AskAlgorithmProps> = ({ algorithmName }) => 
                     placeholder={`e.g. What is the time complexity of ${algorithmName}?`}
                     value={question}
                     onChange={(e) => setQuestion(e.target.value)}
-                    className="min-h-[100px] resize-none bg-background/50"
+                    className="min-h-[100px] resize-none bg-background/50 text-lg"
                 />
 
                 {error && (
@@ -87,7 +87,7 @@ export const AskAlgorithm: React.FC<AskAlgorithmProps> = ({ algorithmName }) => 
                             <MessageSquare className="h-4 w-4" />
                             Answer
                         </h4>
-                        <div className="text-sm leading-relaxed whitespace-pre-wrap">
+                        <div className="text-lg leading-relaxed whitespace-pre-wrap">
                             {answer}
                         </div>
                     </div>
