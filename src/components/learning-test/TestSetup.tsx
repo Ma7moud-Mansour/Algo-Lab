@@ -1,3 +1,4 @@
+import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -84,5 +85,3 @@ export function TestSetup({ onGenerate, isLoading }: TestSetupProps) {
         </div>
     );
 }
-
-import React from 'react';
