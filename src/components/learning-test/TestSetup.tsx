@@ -56,7 +56,10 @@ export function TestSetup({ onGenerate, isLoading }: TestSetupProps) {
                             <SelectContent>
                                 <SelectItem value="sorting">Sorting Algorithms</SelectItem>
                                 <SelectItem value="searching">Searching Algorithms</SelectItem>
-                                {/* Future: Graph, Greedy, DP */}
+                                <SelectItem value="graph">Graph Algorithms</SelectItem>
+                                <SelectItem value="backtracking">Backtracking</SelectItem>
+                                <SelectItem value="dynamic-programming">Dynamic Programming</SelectItem>
+                                <SelectItem value="greedy">Greedy Algorithms</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>

@@ -19,9 +19,38 @@ const SEARCHING_ALGORITHMS = [
     { id: 'binary-search', name: 'Binary Search', desc: 'Split in half, O(log n) - Requires Sorted Input' },
 ];
 
+const GRAPH_ALGORITHMS = [
+    { id: 'bfs', name: 'Breadth-First Search', desc: 'Level by level traversal, O(V+E)' },
+    { id: 'dfs', name: 'Depth-First Search', desc: 'Go deep then backtrack, O(V+E)' },
+];
+
+const BACKTRACKING_ALGORITHMS = [
+    { id: 'n-queens', name: 'N-Queens', desc: 'Place queens safely, O(N!)' },
+    { id: 'sudoku-solver', name: 'Sudoku Solver', desc: 'Fill grid with constraints' },
+    { id: 'rat-maze', name: 'Rat in a Maze', desc: 'Find path through maze' },
+    { id: 'knight-tour', name: "Knight's Tour", desc: 'Visit all squares once' },
+    { id: 'tower-of-hanoi', name: 'Tower of Hanoi', desc: 'Move disks recursively, O(2^n)' },
+];
+
+const DP_ALGORITHMS = [
+    { id: 'fibonacci', name: 'Fibonacci (DP)', desc: 'Memoized sequence, O(n)' },
+    { id: 'knapsack-01', name: '0/1 Knapsack', desc: 'Maximize value with capacity, O(n×W)' },
+    { id: 'lcs', name: 'Longest Common Subsequence', desc: 'Find common subsequence, O(m×n)' },
+    { id: 'bellman-ford', name: 'Bellman-Ford', desc: 'Shortest paths, negative weights, O(V×E)' },
+];
+
+const GREEDY_ALGORITHMS = [
+    { id: 'fractional-knapsack', name: 'Fractional Knapsack', desc: 'Take fractions, O(n log n)' },
+    { id: 'optimal-merge', name: 'Optimal Merge Pattern', desc: 'Merge files at min cost' },
+];
+
 const ALGORITHMS: Record<string, typeof SORTING_ALGORITHMS> = {
     'sorting': SORTING_ALGORITHMS,
-    'searching': SEARCHING_ALGORITHMS
+    'searching': SEARCHING_ALGORITHMS,
+    'graph': GRAPH_ALGORITHMS,
+    'backtracking': BACKTRACKING_ALGORITHMS,
+    'dynamic-programming': DP_ALGORITHMS,
+    'greedy': GREEDY_ALGORITHMS,
 };
 
 export default function LearningTest() {
