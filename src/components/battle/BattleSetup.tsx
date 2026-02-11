@@ -22,11 +22,19 @@ interface BattleSetupProps {
 }
 
 const ALGORITHMS = [
-    { value: 'bubble-sort', label: 'Bubble Sort' },
-    { value: 'selection-sort', label: 'Selection Sort' },
-    { value: 'insertion-sort', label: 'Insertion Sort' },
-    { value: 'merge-sort', label: 'Merge Sort' },
-    { value: 'quick-sort', label: 'Quick Sort' },
+    // Sorting
+    { value: 'bubble-sort', label: 'Bubble Sort', category: 'sorting' },
+    { value: 'selection-sort', label: 'Selection Sort', category: 'sorting' },
+    { value: 'insertion-sort', label: 'Insertion Sort', category: 'sorting' },
+    { value: 'merge-sort', label: 'Merge Sort', category: 'sorting' },
+    { value: 'quick-sort', label: 'Quick Sort', category: 'sorting' },
+    // Searching
+    { value: 'linear-search', label: 'Linear Search', category: 'searching' },
+    { value: 'binary-search', label: 'Binary Search', category: 'searching' },
+    // Graph
+    { value: 'bfs', label: 'Breadth-First Search (BFS)', category: 'graph' },
+    { value: 'dfs', label: 'Depth-First Search (DFS)', category: 'graph' },
+    { value: 'bellman-ford', label: 'Bellman-Ford (Shortest Path)', category: 'graph' },
 ];
 
 export function BattleSetup({
@@ -44,6 +52,9 @@ export function BattleSetup({
     onPause,
     onReset
 }: BattleSetupProps) {
+    const GRAPH_ALGOS = ['bfs', 'dfs', 'bellman-ford'];
+    const hasGraphAlgo = GRAPH_ALGOS.includes(algoA) || GRAPH_ALGOS.includes(algoB);
+
     return (
         <div className="space-y-6 p-4 glass-panel rounded-xl border border-panel-border">
             <div className="flex items-center gap-2">
@@ -82,7 +93,7 @@ export function BattleSetup({
             <div className="space-y-4">
                 <div className="space-y-2">
                     <div className="flex justify-between">
-                        <Label>Input Size: {inputSize}</Label>
+                        <Label>{hasGraphAlgo ? `Nodes: ${Math.max(3, Math.min(12, Math.round(inputSize / 4)))}` : `Input Size: ${inputSize}`}</Label>
                         <span className="text-xs text-muted-foreground uppercase">Change One Thing Mode</span>
                     </div>
                     <Slider
@@ -95,22 +106,33 @@ export function BattleSetup({
                     />
                 </div>
 
-                <div className="space-y-2">
-                    <Label>Data Shape</Label>
-                    <div className="flex gap-2 flex-wrap">
-                        {['random', 'sorted', 'reverse', 'nearly-sorted'].map(shape => (
-                            <Button
-                                key={shape}
-                                variant={dataShape === shape ? "default" : "outline"}
-                                size="sm"
-                                onClick={() => setDataShape(shape)}
-                                className="capitalize"
-                            >
-                                {shape.replace('-', ' ')}
-                            </Button>
-                        ))}
+                {!hasGraphAlgo && (
+                    <div className="space-y-2">
+                        <Label>Data Shape</Label>
+                        <div className="flex gap-2 flex-wrap">
+                            {['random', 'sorted', 'reverse', 'nearly-sorted'].map(shape => (
+                                <Button
+                                    key={shape}
+                                    variant={dataShape === shape ? "default" : "outline"}
+                                    size="sm"
+                                    onClick={() => setDataShape(shape)}
+                                    className="capitalize"
+                                >
+                                    {shape.replace('-', ' ')}
+                                </Button>
+                            ))}
+                        </div>
                     </div>
-                </div>
+                )}
+
+                {hasGraphAlgo && (
+                    <div className="space-y-2">
+                        <Label>Graph Info</Label>
+                        <p className="text-xs text-muted-foreground">
+                            A random connected graph is generated. Move the slider to change the number of nodes.
+                        </p>
+                    </div>
+                )}
             </div>
 
             <div className="pt-2 flex gap-2">
