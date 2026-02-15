@@ -20,7 +20,7 @@ export function Navbar({ onMenuToggle, showMenuButton = false, sidebarOpen = fal
     { to: '/learning-test', label: 'Learning Test' },
     { to: "/algorithms", label: "Algorithms" },
     { to: "/algorithm-decision", label: "Decision Tree" },
-    { to: "/algorithm-battle", label: "Battle Mode" },
+    { to: "/system-design", label: "System Design" },
   ];
 
   return (
