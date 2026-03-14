@@ -23,7 +23,7 @@ export const AskAlgorithm: React.FC<AskAlgorithmProps> = ({ algorithmName }) => 
         setAnswer(null);
 
         try {
-            const response = await fetch('/.netlify/functions/chatbot', {
+            const response = await fetch('/api/chatbot', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

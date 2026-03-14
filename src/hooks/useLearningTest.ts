@@ -26,7 +26,7 @@ export function useLearningTest() {
         setState('loading');
         setCurrentTopic(topic);
         try {
-            const response = await fetch('/.netlify/functions/generate-problem', {
+            const response = await fetch('/api/generate-problem', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ difficulty, topic })

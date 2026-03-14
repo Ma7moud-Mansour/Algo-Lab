@@ -19,11 +19,11 @@ app.use(express.json());
 
 import { Request, Response } from 'express';
 
-app.post('/ask', async (req: Request, res: Response) => {
-    const { question, algorithm } = req.body;
+app.post('/api/chatbot', async (req: Request, res: Response) => {
+    const { message, algorithm } = req.body;
 
-    if (!question || !algorithm) {
-        return res.status(400).json({ error: 'Missing question or algorithm' });
+    if (!message || !algorithm) {
+        return res.status(400).json({ error: 'Missing message or algorithm' });
     }
 
     try {
@@ -45,7 +45,7 @@ app.post('/ask', async (req: Request, res: Response) => {
                 },
                 {
                     role: "user",
-                    content: question
+                    content: message
                 }
             ],
         });
@@ -62,7 +62,7 @@ app.post('/ask', async (req: Request, res: Response) => {
     }
 });
 
-app.post('/generate-problem', async (req: Request, res: Response) => {
+app.post('/api/generate-problem', async (req: Request, res: Response) => {
     const { difficulty, topic } = req.body;
 
     if (!difficulty || !topic) {
